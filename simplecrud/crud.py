@@ -1,4 +1,3 @@
-import logging
 from typing import Dict, List
 
 from sqlalchemy import select, delete
