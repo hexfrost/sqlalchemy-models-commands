@@ -16,8 +16,8 @@ def database_url():
     return os.getenv("TEST_DATABASE_URL")
 
 @pytest.fixture(autouse=True)
-def table():
-    with psycopg2.connect(os.getenv("TEST_DATABASE_URL")) as pg_conn:
+def table_for_test(database_url):
+    with psycopg2.connect(database_url) as pg_conn:
         cur = pg_conn.cursor()
         table = "test_table"
         cur.execute(f"CREATE TABLE {table} (id SERIAL PRIMARY KEY, name TEXT, age INT)")
@@ -28,7 +28,7 @@ def table():
 
 
 @pytest.mark.asyncio
-async def test_insert_to_table(database_url):
+async def test_insert_to_table(table_for_test, database_url):
     data = {"name": "test", "age": 20}
     table = "test_table"
     conn = await connect(dsn=database_url)
