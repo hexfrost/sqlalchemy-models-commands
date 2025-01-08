@@ -2,11 +2,12 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/d33ecb2661fb7aedf516/test_coverage)](https://codeclimate.com/github/hexfrost/sqlalchemy-models-commands/test_coverage)
 [![flake8](https://github.com/hexfrost/simplecrud/actions/workflows/linter.yml/badge.svg?branch=staging)](https://github.com/hexfrost/simplecrud/actions/workflows/linter.yml)
 
-
+***
 # SimpleCRUD
+[![PyPI Downloads](https://static.pepy.tech/badge/hexfrost-simplecrud)](https://pepy.tech/projects/hexfrost-simplecrud)
+
 SimpleCRUD is a library that provides a simple way to create CRUD commands for SQLAlchemy models.
 
-***
 
 ## Installation
 
