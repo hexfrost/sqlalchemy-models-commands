@@ -31,7 +31,7 @@ def table():
 async def test_insert_to_table(database_url):
     data = {"name": "test", "age": 20}
     table = "test_table"
-    conn = connect(dsn=database_url)
+    conn = await connect(dsn=database_url)
     await insert_to_table(conn, table, data)
     with psycopg2.connect(database_url) as pg_conn:
         cur = pg_conn.cursor()
