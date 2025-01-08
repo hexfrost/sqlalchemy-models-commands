@@ -7,4 +7,4 @@ package-install:
 lint:
 	poetry run flake8 simplecrud
 coverage:
-	poetry run coverage run --source=simplecrud -m pytest
+	poetry run pytest --cov=simplecrud --cov-report=xml
