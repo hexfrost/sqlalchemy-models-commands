@@ -2,8 +2,6 @@ import asyncio
 import logging
 from functools import wraps
 
-from simplecrud.settings import session
-
 
 def async_to_sync(func):
     """Decorator to convert async function to sync"""
@@ -15,19 +13,6 @@ def async_to_sync(func):
         return result
 
     return wrapper
-
-
-def inject_connection(func):
-    """Decorator to inject database connection to function"""
-
-    @wraps(func)
-    def inner(*args, **kwargs):
-        if kwargs.get('conn') is None:
-            kwargs['conn'] = session()
-        result = func(*args, **kwargs)
-        return result
-
-    return inner
 
 
 def add_log(func):

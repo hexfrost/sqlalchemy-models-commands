@@ -2,10 +2,12 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/d33ecb2661fb7aedf516/test_coverage)](https://codeclimate.com/github/hexfrost/sqlalchemy-models-commands/test_coverage)
 [![flake8](https://github.com/hexfrost/simplecrud/actions/workflows/linter.yml/badge.svg?branch=staging)](https://github.com/hexfrost/simplecrud/actions/workflows/linter.yml)
 
+***
 # SimpleCRUD
+[![PyPI Downloads](https://static.pepy.tech/badge/hexfrost-simplecrud)](https://pepy.tech/projects/hexfrost-simplecrud)
+
 SimpleCRUD is a library that provides a simple way to create CRUD commands for SQLAlchemy models.
 
-***
 
 ## Installation
 
@@ -21,8 +23,7 @@ poetry add hexfrost-simplecrud
 ## Usage
 
 1. Create a model
-2. Create a CRUDConfig
-3. Set sessionmaker to CRUDConfig
+2. Create a sessionmaker from SQLAlchemy
 4. Import CRUD functions
 5. Use CRUD functions and enjoy
 
@@ -32,10 +33,10 @@ poetry add hexfrost-simplecrud
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 
-from simplecrud import CRUDConfig, BaseModelWithCRUD, get_all, create_obj, update_obj
+from simplecrud import get_all, create_obj, update_obj, delete_object
 
 engine = create_async_engine("sqlite+aiosqlite:///test.db", echo=True)
-async_sessionmaker = async_sessionmaker(async_engine, expire_on_commit=False, class_=AsyncSession)
+session = async_sessionmaker(async_engine, expire_on_commit=False, class_=AsyncSession)
 
 # Create a model
 class ExampleModel(DeclarativeBase):
@@ -45,22 +46,19 @@ class ExampleModel(DeclarativeBase):
     description = Column(String(50), nullable=False)
 
 
-# Create CRUD config
-CRUDConfig.sessionmaker(async_sessionmaker)
-
 async def example_func():
 
     # Create a model
-    new_model = await create_object(model, name="test", description="test")
+    new_model = await create_object(model, name="test", description="test", conn=session())
 
     # Get all models
-    all_objs = await get_all(model)
+    all_objs = await get_all(model, conn=session())
 
     # Update a model
-    updated_obj = await update_object(model, name="test2", description="test2")
+    updated_obj = await update_object(model, name="test2", description="test2", conn=session())
 
     # Delete a model
-    await delete_object(model, name="test2", description="test2")
+    await delete_object(model, name="test2", description="test2", conn=session())
 
 ```
 
@@ -86,10 +84,6 @@ async def example_func():
 ## Contributing
 
 This project is open for contributions. Feel free to open an issue or create a pull request.
-
-Dev version status: 
-[![flake8](https://github.com/hexfrost/simplecrud/actions/workflows/linter.yml/badge.svg?branch=dev)](https://github.com/hexfrost/simplecrud/actions/workflows/linter.yml)
-[![Coverage](https://github.com/hexfrost/simplecrud/actions/workflows/coverage.yml/badge.svg?branch=dev)](https://github.com/hexfrost/simplecrud/actions/workflows/coverage.yml)
 
 ***
 

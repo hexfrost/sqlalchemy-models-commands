@@ -1,13 +1,13 @@
-import logging
 from typing import Dict, List
 
 from sqlalchemy import select, delete
-from .utils import inject_connection
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 # READ / GET
-@inject_connection
-async def get_object(model, filters, conn=None) -> object:
+
+
+async def get_object(model, filters: dict, conn: AsyncSession = None) -> object:
     """Get object from db"""
     query = select(model).filter_by(**filters)
     async with conn:
@@ -16,8 +16,7 @@ async def get_object(model, filters, conn=None) -> object:
     return obj
 
 
-@inject_connection
-async def get_all(model, conn=None) -> List[object]:
+async def get_all(model, conn: AsyncSession = None) -> List[object]:
     """Get objects from db"""
     query = select(model)
     async with conn:
@@ -26,8 +25,7 @@ async def get_all(model, conn=None) -> List[object]:
     return objects
 
 
-@inject_connection
-async def get_all_with_filter(model, filters: dict, conn=None) -> List[object]:
+async def get_all_with_filter(model, filters: dict, conn: AsyncSession = None) -> List[object]:
     """Get objects from db"""
     query = select(model).filter_by(**filters)
     async with conn:
@@ -36,8 +34,9 @@ async def get_all_with_filter(model, filters: dict, conn=None) -> List[object]:
     return objects
 
 
-@inject_connection
-async def get_objects(model, filters: Dict, limit=10, offset=10, conn=None) -> List[object]:
+async def get_objects(
+    model, filters: Dict, limit: int = 10, offset: int = 10, conn: AsyncSession = None
+) -> List[object]:
     """Get objects from db"""
     query = select(model).filter_by(**filters).limit(limit).offset(offset)
     async with conn:
@@ -46,8 +45,7 @@ async def get_objects(model, filters: Dict, limit=10, offset=10, conn=None) -> L
     return objects
 
 
-@inject_connection
-async def get_or_create_object(model, params, conn=None) -> object:
+async def get_or_create_object(model, params: dict, conn: AsyncSession = None) -> object:
     """Get object from db or create new one"""
     obj = await get_object(model, params, conn=conn)
     if not obj:
@@ -56,8 +54,9 @@ async def get_or_create_object(model, params, conn=None) -> object:
 
 
 # CREATE
-@inject_connection
-async def create_object(model, params, conn=None) -> object:
+
+
+async def create_object(model, params, conn: AsyncSession = None) -> object:
     """Create object in db"""
     new_obj = model(**params)
     async with conn:
@@ -66,15 +65,15 @@ async def create_object(model, params, conn=None) -> object:
     return new_obj
 
 
-@inject_connection
-async def bulk_create(model, data: List[Dict], conn=None) -> List[object]:
+async def bulk_create(model, data: List[Dict], conn: AsyncSession = None) -> List[object]:
     """Bulk create objects in db"""
     return [await create_object(model, params, conn=conn) for params in data]
 
 
 # UPDATE
-@inject_connection
-async def update_object(obj, params, conn=None) -> object:
+
+
+async def update_object(obj, params, conn: AsyncSession = None) -> object:
     """
     Soft Update object in db.
     If attribute not exists in model`s fields, then skip field without error
@@ -89,8 +88,7 @@ async def update_object(obj, params, conn=None) -> object:
     return obj
 
 
-@inject_connection
-async def update_or_error(obj, params, conn=None) -> object:
+async def update_or_error(obj, params, conn: AsyncSession = None) -> object:
     """
     Soft Update object in db.
     If attribute not exists in model`s fields, then skip field without error
@@ -103,16 +101,14 @@ async def update_or_error(obj, params, conn=None) -> object:
     return obj
 
 
-@inject_connection
-async def update_object_by_id(model, id: int, params, conn=None) -> object:
+async def update_object_by_id(model, id: int, params, conn: AsyncSession = None) -> object:
     """Update object in db by id"""
-    obj = await get_object(model, dict(id=id))
+    obj = await get_object(model, dict(id=id), conn=conn)
     updated_obj = await update_object(obj, params, conn=conn)
     return updated_obj
 
 
-# @inject_connection
-# async def bulk_update(objects, params, conn=None) -> List[object]:
+# async def bulk_update(objects, params, conn: AsyncSession = None) -> List[object]:
 #     """Bulk update objects in db"""
 #     updated_objects = []
 #     for obj in objects:
@@ -121,22 +117,21 @@ async def update_object_by_id(model, id: int, params, conn=None) -> object:
 #     return updated_objects
 
 
-@inject_connection
-async def update_or_create_object(model, filters, params, conn=None) -> object:
+async def update_or_create_object(model, filters, params, conn: AsyncSession = None) -> object:
     obj = await get_or_create_object(model, filters, conn=conn)
     return await update_object(obj, params, conn=conn)
 
 
 # DELETE
-@inject_connection
-async def delete_object(obj, conn=None) -> bool:
+
+
+async def delete_object(obj, conn: AsyncSession = None) -> bool:
     model = obj.__class__
     id_ = obj.id
     return await delete_object_by_id(model, id_, conn=conn)
 
 
-@inject_connection
-async def delete_object_by_id(model, id_: int, conn=None) -> bool:
+async def delete_object_by_id(model, id_: int, conn: AsyncSession = None) -> bool:
     query = delete(model).where(model.id == id_)
     async with conn:
         await conn.execute(query)
@@ -144,15 +139,13 @@ async def delete_object_by_id(model, id_: int, conn=None) -> bool:
     return True
 
 
-@inject_connection
-async def bulk_delete(objects, conn=None) -> bool:
+async def bulk_delete(objects, conn: AsyncSession = None) -> bool:
     for obj in objects:
         await delete_object(obj, conn=conn)
     return True
 
 
-@inject_connection
-async def bulk_delete_by_id(model, ids, conn=None) -> bool:
+async def bulk_delete_by_id(model, ids, conn: AsyncSession = None) -> bool:
     for id_ in ids:
         await delete_object_by_id(model, id_, conn=conn)
     return True

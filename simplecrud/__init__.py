@@ -1,2 +1,5 @@
 from . import crud
-from .settings import CRUDConfig
+
+from .asyncpg_commands.cruds import insert_to_table
+
+
