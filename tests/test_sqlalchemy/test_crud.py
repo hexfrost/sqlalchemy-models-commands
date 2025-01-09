@@ -1,10 +1,9 @@
-import time
 import unittest
 
 from sqlalchemy import Column, Integer, String, create_engine
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 from simplecrud.crud import *
 from simplecrud.utils import async_to_sync
