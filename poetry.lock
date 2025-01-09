@@ -672,11 +672,7 @@ files = [
     {file = "typing_extensions-4.12.2.tar.gz", hash = "sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"},
 ]
 
-[extras]
-asyncpg = ["asyncpg"]
-sqlalchemy = ["sqlalchemy"]
-
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.1,<4.0"
-content-hash = "dbe028244d5e37f4f325c679d26cb75d19c5217fc68bd5af29c089ad8f8e13c4"
+content-hash = "c6c107f49157a8ee3cd11dd31ace1b25ae1fce83ba924c7d3e2a18f7016e9ba0"
